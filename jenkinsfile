@@ -6,20 +6,22 @@ pipeline {
     }
 
     stages {
-        stage('Build and push Docker image') {
+        stage('Build') {
             steps {
-                build job: 'docker-image', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+                echo 'Building job 1...'
+                sh 'sleep 5s' // simulate build process
+                echo 'Job 1 build successful!'
             }
         }
         stage('Deploy') {
             steps {
-                script {
-                    if (currentBuild.result == 'SUCCESS') {
-                        build job: 'helm', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
-                    }
-                }
+                echo 'Deploying job 2...'
+                build job: 'job2', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+                echo 'Job 2 deployment successful!'
             }
         }
     }
 }
+
+
 
