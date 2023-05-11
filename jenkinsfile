@@ -12,10 +12,14 @@ pipeline {
             }
         }
         stage('Deploy') {
-            dependsOn('Build and push Docker image')
             steps {
-                build job: 'helm', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+                script {
+                    if (currentBuild.result == 'SUCCESS') {
+                        build job: 'helm', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+                    }
+                }
             }
         }
     }
 }
+
