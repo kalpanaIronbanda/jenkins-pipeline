@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BUILD_NUMBER', defaultValue: '1', description: 'Build Number')
+    }
+
+    stages {
+        stage('Build and push Docker image') {
+            steps {
+                build job: 'docker-image', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+            }
+        }
+        stage('Deploy') {
+            dependsOn('Build and push Docker image')
+            steps {
+                build job: 'helm', parameters: [string(name: 'BUILD_NUMBER', value: "${params.BUILD_NUMBER}")]
+            }
+        }
+    }
+}
